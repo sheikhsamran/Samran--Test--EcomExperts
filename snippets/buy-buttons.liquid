@@ -73,6 +73,13 @@
               assign quantity_rule_soldout = true
             endif
           -%}
+          {% comment %} For Check variant Dropdown {% endcomment %}
+          {%- for option in product.options_with_values -%}
+            {% if section.settings.change_size_picker_type and option.name == "Size" or option.name == "size" %}
+                {% assign check_variant = true %}
+            {% endif %}
+          {% endfor %}
+
           <button
             id="ProductSubmitButton-{{ section_id }}"
             type="submit"
@@ -81,6 +88,14 @@
             {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}
               disabled
             {% endif %}
+            {% if product.has_only_default_variant == false %}
+            {% if check_variant %}
+              style="
+                  pointer-events: none;
+                  opacity: 0.5;
+              "
+            {% endif %}
+          {% endif %}
           >
             <span>
               {%- if product.selected_or_first_available_variant.available == false or quantity_rule_soldout -%}

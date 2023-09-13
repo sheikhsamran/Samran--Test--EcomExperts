@@ -76,6 +76,84 @@ class CartItems extends HTMLElement {
           console.error(e);
         });
     }
+    this.checkGiftProduct();
+  }
+
+  checkGiftProduct() {
+    setTimeout(function() {    
+    
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/cart.js', true); // This is the Shopify AJAX cart endpoint
+    xhr.setRequestHeader('Content-Type', 'application/json');
+  
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          let free_item_exist = false
+          let add_free_item = false 
+          let adjust_free_item_quantity = false;
+          var cartData = JSON.parse(xhr.responseText);
+          for (let i = 0; i < cartData.items.length; i++) {
+            if(cartData.items[i].id == 46681810108699){
+              add_free_item = true;
+            }
+            if(cartData.items[i].id == 46670867038491){
+              free_item_exist = true;
+            }
+            if(cartData.items[i].id == 46670867038491 && cartData.items[i].quantity > 1){
+              adjust_free_item_quantity = true;
+            }
+          }
+          if(free_item_exist && add_free_item==false){
+            remove_free_product();
+          }else if(add_free_item && free_item_exist == false){
+            add_free_product();
+          }else if(add_free_item && free_item_exist && adjust_free_item_quantity){
+            adjust_free_product_quantity();
+          }
+        } else {
+          console.error('Error fetching cart data:', xhr.status, xhr.statusText);
+        }
+      }
+    };
+  
+    xhr.send();
+
+      setTimeout(function() {    
+      fetch(`${routes.cart_url}?section_id=cart-drawer`)
+      .then((response) => response.text())
+      .then((responseText) => {
+        const html = new DOMParser().parseFromString(responseText, 'text/html');
+        const selectors = ['cart-drawer-items', '.cart-drawer__footer'];
+        if(html.querySelector("cart-drawer.is-empty") != null){
+          if(window.location.href.includes('cart')){
+            window.location = window.routes.cart_url;
+          }else{
+            const empty_selectors = ['cart-drawer.drawer'];
+            for (const empty_selector of empty_selectors) {
+              const targetElement = document.querySelector(empty_selector);
+              const sourceElement = html.querySelector(empty_selector);
+              html.querySelector(empty_selector).classList.add('animate', 'active');
+              if (targetElement && sourceElement) {
+                targetElement.replaceWith(sourceElement);
+              }
+            }
+          }
+         }else{
+          for (const selector of selectors) {
+            const targetElement = document.querySelector(selector);
+            const sourceElement = html.querySelector(selector);
+            if (targetElement && sourceElement) {
+              targetElement.replaceWith(sourceElement);
+            }
+          }
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+      }, 1000);
+    }, 500);
   }
 
   getSectionsToRender() {
@@ -177,6 +255,7 @@ class CartItems extends HTMLElement {
       .finally(() => {
         this.disableLoading(line);
       });
+      this.checkGiftProduct();
   }
 
   updateLiveRegions(line, message) {
@@ -243,4 +322,52 @@ if (!customElements.get('cart-note')) {
       }
     }
   );
+}
+
+function add_free_product(){
+  var request = new XMLHttpRequest();
+  request.open('POST', '/cart/add.js', true);
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.setRequestHeader('Accept', 'application/json');
+  var requestData = JSON.stringify({
+    quantity: 1,
+    id: 46670867038491
+  });
+  request.onload = function() {
+    if (request.status >= 200 && request.status < 400) {
+    }
+  };
+  request.send(requestData);
+}
+
+function remove_free_product(){
+  var request2 = new XMLHttpRequest();
+  request2.open('POST', '/cart/change.js', true);
+  request2.setRequestHeader('Content-Type', 'application/json');
+  request2.setRequestHeader('Accept', 'application/json');
+  var requestData2 = JSON.stringify({
+    quantity: 0,
+    id: '46670867038491'
+  });
+  request2.onload = function() {
+    if (request2.status >= 200 && request2.status < 400) {
+    }
+  };
+  request2.send(requestData2);
+}
+
+function adjust_free_product_quantity(){
+  var request2 = new XMLHttpRequest();
+  request2.open('POST', '/cart/change.js', true);
+  request2.setRequestHeader('Content-Type', 'application/json');
+  request2.setRequestHeader('Accept', 'application/json');
+  var requestData2 = JSON.stringify({
+    quantity: 1,
+    id: '46670867038491'
+  });
+  request2.onload = function() {
+    if (request2.status >= 200 && request2.status < 400) {
+    }
+  };
+  request2.send(requestData2);
 }

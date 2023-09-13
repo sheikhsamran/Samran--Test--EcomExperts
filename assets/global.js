@@ -1257,3 +1257,24 @@ class ProductRecommendations extends HTMLElement {
 }
 
 customElements.define('product-recommendations', ProductRecommendations);
+
+
+function ecomchange(e) {
+  var selectval = e.value;
+  document.querySelector('.hide-dropdown [data-img-alt="'+selectval+'"]').click();
+  document.querySelector(".product-form__submit").style.opacity = "1";
+  document.querySelector(".product-form__submit").style.pointerEvents = "unset";
+}
+
+
+function showimags(e) {
+  var data = e.dataset.imgAlt;
+  var lengthhide = document.querySelectorAll(".thumbnail-list .thumbnail-list__item").length;
+  for (let i = 0; i < lengthhide; i++) {
+      document.querySelectorAll(".thumbnail-list .thumbnail-list__item")[i].style.display = "none";
+  }
+  var showlength = document.querySelectorAll(".thumbnail-list .thumbnail-list__item[data-media-name="+data+"]").length;
+  for (let i = 0; i < showlength; i++) {
+    document.querySelectorAll(".thumbnail-list .thumbnail-list__item[data-media-name="+data+"]")[i].style.display = "block";
+  }
+}

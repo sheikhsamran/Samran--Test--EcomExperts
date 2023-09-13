@@ -3511,3 +3511,24 @@ details-disclosure > details {
     --border-offset: 0px; /* Prevent the border from growing on buttons when this effect is on. */
   }
 }
+/* For Product dropdown */
+.hide-dropdown {
+  display: none;
+}
+.custom-color {
+  padding: 15px!important;
+}
+.product-form__input input[type=radio]+label.custom-color:after {
+  border-radius: 50px;
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  top: 0;
+  left: 0;
+  transition: 0.3s;
+}
+.product-form__input input[type=radio]:checked+label.custom-color:after {
+  border-color: white;
+}
