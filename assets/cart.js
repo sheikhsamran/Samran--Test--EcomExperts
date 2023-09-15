@@ -335,6 +335,9 @@ function add_free_product(){
   });
   request.onload = function() {
     if (request.status >= 200 && request.status < 400) {
+      if(window.location.href.includes('cart')){
+        location.reload();
+      }
     }
   };
   request.send(requestData);
@@ -351,6 +354,9 @@ function remove_free_product(){
   });
   request2.onload = function() {
     if (request2.status >= 200 && request2.status < 400) {
+      if(window.location.href.includes('cart')){
+        location.reload();
+      }
     }
   };
   request2.send(requestData2);
@@ -367,6 +373,9 @@ function adjust_free_product_quantity(){
   });
   request2.onload = function() {
     if (request2.status >= 200 && request2.status < 400) {
+      if(window.location.href.includes('cart')){
+        location.reload();
+      }
     }
   };
   request2.send(requestData2);
